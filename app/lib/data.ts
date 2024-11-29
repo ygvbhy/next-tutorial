@@ -8,7 +8,7 @@ import {
   Revenue,
 } from "./definitions";
 import { formatCurrency } from "./utils";
-
+import { createServerSideClient } from "@/app/lib/supabase";
 export async function fetchRevenue() {
   try {
     // Artificially delay a response for demo purposes.
@@ -16,12 +16,13 @@ export async function fetchRevenue() {
 
     // console.log('Fetching revenue data...');
     // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
+    const supabase = await createServerSideClient();
+    const data = await supabase.from("revenue").select("*");
+    // const data = await sql<Revenue>`SELECT * FROM revenue`;
 
     // console.log('Data fetch completed after 3 seconds.');
 
-    return data.rows;
+    return data.data;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch revenue data.");
